@@ -313,6 +313,8 @@ float rsout(float mag, float psi){
 void main() {
     float scale = 15.0; // size of disk
     float scale2 = 40.;//size of horizon
+
+    //screen coordinate, scale 2 gives size of black hole on screen
     vec2 uv = 2. * scale2 * ((gl_FragCoord.xy ) / uResolution.xy - vec2(0.5 ,0.5)); 
     float x = uv.x;
     float y = uv.y;
@@ -335,7 +337,8 @@ void main() {
     float phi = M_PI/2.*(1.+sign(costheta)) + M_PI*(1.-sign(y)) + sign(y)*acos(costheta*cosvarphi/sqrt(1.0-pow(sin(theta)*cosvarphi, 2.0)));
     float phi2 = phi + M_PI;
 
-
+    //sqrt(27) is the dotted line in the image
+    //if gets the rays 
     if (mag*mag > 27.){
         rs = rsin(mag, psi);
         rs1 = rsout(mag, M_PI+ psi);
