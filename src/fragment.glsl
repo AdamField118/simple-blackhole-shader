@@ -191,13 +191,16 @@ float am(float u, float m, float tol){
     return phi;
 }
 
+//jacobi elliptical sine function??
 float sn(float u, float m){
+    //greater and lower tolerance
     bool lt0 = m < 0.;
     bool gt1 = m > 1.;
     if (!(lt0) && !(gt1)){
         float phi = am(u, m, D1MACH3*2.);
         return sin(phi);
     } else if(lt0) {
+        //since this is the case where m is negative, we redefine m to be mu then redefine u based on the new m
         float mu1 = 1.0/(1.-m);
         float mu = -m*mu1;
         float sqrtmu1 = sqrt(mu1);
@@ -217,6 +220,7 @@ float sn(float u, float m){
     }
 }
 
+////jacobi elliptical cosine function?? Same as sn() but uses cosine instead
 float cn(float u, float m){
     bool lt0 = m < 0.;
     bool gt1 = m > 1.;
@@ -243,6 +247,8 @@ float cn(float u, float m){
     }
 }
 
+
+//rsin(), psimax() and rsout() have a lot of complex number manipulation
 float rsin(float mag, float psi){
     vec2 q = vec2(2.*mag*mag, 0.);
     vec2 p = vec2(-mag*mag, 0.);
@@ -263,7 +269,7 @@ float rsin(float mag, float psi){
     float A = pow(c_m(v32, v42)[0], 0.5);
     float B = pow(c_m(v31, v41)[0], 0.5);
     
-    
+    //this is where the elliptical integral actually starts?
     float arg = sqrt(A*B)*(psi)/mag;
     if(mag*mag < 27.){
         float ellk = (pow(A + B, 2.) - pow(v1[0], 2.)) / (4.*A*B);
@@ -362,6 +368,7 @@ float rsout(float mag, float psi){
 
 }
 
+//heres the meat and potatoes
 void main() {
     float scale = 15.0; // size of disk
     float scale2 = 40.;//size of horizon
