@@ -368,26 +368,25 @@ float rsout(float mag, float psi){
 
 }
 
-//heres the meat and potatoes
 void main() {
     float scale = 15.0; // size of disk
-    float scale2 = 40.;//size of horizon
+    float scale2 = 40.; //size of horizon
 
-    //screen coordinate, scale 2 gives size of black hole on screen
+    //screen coordinate, scale2 gives size of black hole on screen
     vec2 uv = 2. * scale2 * ((gl_FragCoord.xy ) / uResolution.xy - vec2(0.5 ,0.5)); 
     float x = uv.x;
     float y = uv.y;
     float mag = length(uv);
+
+    //circular coordinates
     float cosvarphi = x/mag;
     float costheta = cos(theta);
     float sinvarphi = sign(costheta)*y/mag;
-
-
-
     float tanvarphi = sinvarphi/abs(cosvarphi);
     float psi = acos(-((sin(theta)*tanvarphi) / 
         (pow(pow(costheta,2.0) + pow(tanvarphi,2.0), .5))));
 
+    //represents the radial distances of two rays (rsin and rsout), likely corresponding to the paths that light rays take around the black hole
     float rs = 0.0;
     float rs1 = 0.0;
     //float rs2 = 0.0;
@@ -416,17 +415,26 @@ void main() {
         rs1 = rsin(mag, M_PI + psi);
         gl_FragColor = vec4(0., 0., 0., 1.);
     }
-    
+
+    //makes the rays black that are in the black hole
     if(rs < 2.0){
         gl_FragColor = vec4(0., 0., 0., 1.);
         return;
     }
-    
+
+    //making sure the accretion disk is between the minimum visible distance and the scale we want
     if (rs > 7.0 && rs < scale) {
+        //vec2(cos(phi), sin(phi)) gets a cartesian vector in the direction of phi with the magnitude of rs
+        //divided by (2.0 * scale) normalizes the ray to within a fraction of the scale, therefore making it within our visible region?
+        //shifts the vector to make the origin at (0.5,0.5)?
         vec2 uv2 = rs*vec2(cos(phi),sin(phi))/(2.0*scale)  + vec2(0.5, 0.5) ;
+
+        //retreives the right color from the texture1 image
         gl_FragColor = texture2D(texture1, uv2);
 
     }
+
+    //same thing with the secondary arrays, rs1 is rsout and rs is rsin
     if (rs1 > 7.0 && rs1 < scale){
         vec2 uv3 = rs1*vec2(cos(phi),sin(phi))/(2.0*scale)  + vec2(0.5, 0.5) ;
         gl_FragColor += texture2D(texture1, uv3);
